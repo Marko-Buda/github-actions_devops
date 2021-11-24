@@ -31,6 +31,19 @@ jobs:
         with:
           python-version: 3.6
           
+      - name: Setup JFrog CLI
+        uses: ./
+        env:
+            JF_ARTIFACTORY_LOCAL: = eyJ2ZXIiOiIyIiwidHlwIjoiSldUIiwiYWxnIjoiUlMyNTYiLCJraWQiOiJMTmpOeDV2ME9yZkZ6V0xfenh1QmFmNmx4UmZLQzRIdjF4WUdldnd4RFVvIn0.eyJzdWIiOiJqZmZlQDAwMFwvdXNlcnNcL2l2YW4iLCJzY3AiOiJhcHBsaWVkLXBlcm1pc3Npb25zXC9hZG1pbiBhcGk6KiIsImF1ZCI6IipAKiIsImlzcyI6ImpmZmVAMDAwIiwiaWF0IjoxNjM3NzY5ODUxLCJqdGkiOiJkOGU2YzM2Ni1hM2EzLTRhMGEtOGNiOC1hYzU4ZTFjMjliNmIifQ.HFzinNoKGWs63anaYC0HN_RbkeA9KyGG888rfTATFfkA8rdlxfrx_hjUC798Xo4byntlxqvkwdJBc5aabAfXPWF1E5WkgTRtJp3CpGdyP8Nihy1TLYzv7o_wuxBIE07YDCYFhYBq0fbn3RYXhqjomDkwPt3bEwR6S4MM-zQyRqDiL61lXuXBuuBK8e5pQqlgaBP4KjlYuFVz1Wx8ru5ZYGkfZXQvNlx8guE6t5msm1m4UAjGgiKpPcBsS6pWvtk3zeuRDlWJF7DmLmI-0wCRknA6Bb4YajEGQ0M4vZtWkJKuRL5papNMOKwmPaxP_yau356UrXnvYw-7Kme19SeBYg
+      - name: Sanity # Check that the correct CLI downloaded and local server successfully configured
+        run: jfrog c show local
+        
+      - name: Check build URL
+        uses: wei/curl@master
+        with:
+            args: -I ${JFROG_CLI_BUILD_URL}
+        if: runner.os == 'Linux'
+          
       - name: Install dependencies
         run: |
           make install
@@ -43,12 +56,21 @@ jobs:
         run: |
           make test
           
-      - name: Upload a Build Artifact
-        uses: actions/upload-artifact@v2.2.4
-        with:
+      - name: "Step2 - Upload"
+        uses: "retgits/actions/jfrog-cli-go@master"
+        secrets: ["URL", "USER", "PASSWORD"]
+        run: |
+          upload hello generic-local --build-name=my-build --build-number=2
+        env: 
+          CRED: "username"
+        
+          
+  #    - name: Upload a Build Artifact
+   #     uses: actions/upload-artifact@v2.2.4
+     #   with:
           # Artifact name
-          name: artifact
+      #    name: artifact
           # A file, directory or wildcard pattern that describes what to upload
-          path: /
+       #   path: /
           # The desired behavior if no files are found using the provided path.
-          retention-days: 0
+         # retention-days: 0
