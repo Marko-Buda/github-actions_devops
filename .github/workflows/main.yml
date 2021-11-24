@@ -30,14 +30,20 @@ jobs:
         uses: actions/setup-python@v1
         with:
           python-version: 3.6
-          
+        
       - name: Setup JFrog CLI
-        uses: ./
+        uses: jfrog/setup-jfrog-cli@v1
         env:
-            JF_ARTIFACTORY_LOCAL: = eyJ2ZXIiOiIyIiwidHlwIjoiSldUIiwiYWxnIjoiUlMyNTYiLCJraWQiOiJMTmpOeDV2ME9yZkZ6V0xfenh1QmFmNmx4UmZLQzRIdjF4WUdldnd4RFVvIn0.eyJzdWIiOiJqZmZlQDAwMFwvdXNlcnNcL2l2YW4iLCJzY3AiOiJhcHBsaWVkLXBlcm1pc3Npb25zXC9hZG1pbiBhcGk6KiIsImF1ZCI6IipAKiIsImlzcyI6ImpmZmVAMDAwIiwiaWF0IjoxNjM3NzY5ODUxLCJqdGkiOiJkOGU2YzM2Ni1hM2EzLTRhMGEtOGNiOC1hYzU4ZTFjMjliNmIifQ.HFzinNoKGWs63anaYC0HN_RbkeA9KyGG888rfTATFfkA8rdlxfrx_hjUC798Xo4byntlxqvkwdJBc5aabAfXPWF1E5WkgTRtJp3CpGdyP8Nihy1TLYzv7o_wuxBIE07YDCYFhYBq0fbn3RYXhqjomDkwPt3bEwR6S4MM-zQyRqDiL61lXuXBuuBK8e5pQqlgaBP4KjlYuFVz1Wx8ru5ZYGkfZXQvNlx8guE6t5msm1m4UAjGgiKpPcBsS6pWvtk3zeuRDlWJF7DmLmI-0wCRknA6Bb4YajEGQ0M4vZtWkJKuRL5papNMOKwmPaxP_yau356UrXnvYw-7Kme19SeBYg
-      
-      - name: Sanity # Check that the correct CLI downloaded and local server successfully configured
-        run: jfrog c show local
+          JF_ARTIFACTORY_SERVER: eyJ2ZXIiOiIyIiwidHlwIjoiSldUIiwiYWxnIjoiUlMyNTYiLCJraWQiOiJMTmpOeDV2ME9yZkZ6V0xfenh1QmFmNmx4UmZLQzRIdjF4WUdldnd4RFVvIn0.eyJzdWIiOiJqZmZlQDAwMFwvdXNlcnNcL2l2YW4iLCJzY3AiOiJhcHBsaWVkLXBlcm1pc3Npb25zXC9hZG1pbiBhcGk6KiIsImF1ZCI6IipAKiIsImlzcyI6ImpmZmVAMDAwIiwiaWF0IjoxNjM3NzY5ODUxLCJqdGkiOiJkOGU2YzM2Ni1hM2EzLTRhMGEtOGNiOC1hYzU4ZTFjMjliNmIifQ.HFzinNoKGWs63anaYC0HN_RbkeA9KyGG888rfTATFfkA8rdlxfrx_hjUC798Xo4byntlxqvkwdJBc5aabAfXPWF1E5WkgTRtJp3CpGdyP8Nihy1TLYzv7o_wuxBIE07YDCYFhYBq0fbn3RYXhqjomDkwPt3bEwR6S4MM-zQyRqDiL61lXuXBuuBK8e5pQqlgaBP4KjlYuFVz1Wx8ru5ZYGkfZXQvNlx8guE6t5msm1m4UAjGgiKpPcBsS6pWvtk3zeuRDlWJF7DmLmI-0wCRknA6Bb4YajEGQ0M4vZtWkJKuRL5papNMOKwmPaxP_yau356UrXnvYw-7Kme19SeBYg
+     
+      - name: Run JFrog CLI
+        run: |
+          # Collect environment variables for the build
+          jfrog rt bce
+          # Collect VCS details from git and add them to the build
+          jfrog rt bag
+          # Publish build info
+          jfrog rt bp
         
       - name: Check build URL
         uses: wei/curl@master
